@@ -15,7 +15,7 @@ class MainScreenViewModel @Inject constructor(
     private val loadRepository: LoadRepository
 ) : ViewModel() {
 
-    val loadedInfo = MutableLiveData<Int>()
+    val loadedInfo = MutableLiveData<State>()
 
     fun loadSomeInfo() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -24,10 +24,10 @@ class MainScreenViewModel @Inject constructor(
                 .collect {
                     when (it) {
                         is State.Loading -> {
-
+                            loadedInfo.postValue(it)
                         }
                         is State.SuccessLoadInfo -> {
-                            loadedInfo.postValue(it.info)
+                            loadedInfo.postValue(it)
                         }
                     }
                 }

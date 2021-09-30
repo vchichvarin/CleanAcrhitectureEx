@@ -11,6 +11,7 @@ import com.vchichvarin.cleanacrhitectureex.databinding.FragmentMainFlowBinding
 import com.vchichvarin.cleanacrhitectureex.domain.di.factory.ViewModelFactory
 import com.vchichvarin.cleanacrhitectureex.domain.interactors.MainScreenViewModel
 import com.vchichvarin.cleanacrhitectureex.domain.interactors.SplashViewModel
+import com.vchichvarin.cleanacrhitectureex.domain.models.State
 import javax.inject.Inject
 
 class MainScreenFlowFragment : Fragment() {
@@ -32,7 +33,18 @@ class MainScreenFlowFragment : Fragment() {
         activityViewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(SplashViewModel::class.java)
 
         mainScreenViewModel.loadedInfo.observe(requireActivity(), {
-            binding.infoText.text = it.toString()
+            when (it) {
+                is State.Loading -> {
+                    binding.progress.visibility = View.VISIBLE
+                    binding.infoText.visibility = View.GONE
+                }
+                is State.SuccessLoadInfo -> {
+                    binding.progress.visibility = View.GONE
+                    binding.infoText.visibility = View.VISIBLE
+                    binding.infoText.text = it.info.toString()
+                }
+            }
+
         })
 
         mainScreenViewModel.loadSomeInfo()
